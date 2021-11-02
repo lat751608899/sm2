@@ -55,7 +55,7 @@ class PrivateKey
         return [$x, $y];
     }
 
-    protected function getPublickKey()
+    public function getPublickKey()
     {
         if($this->pubKey){
             return $this->pubKey;

@@ -21,7 +21,7 @@ class Sm2
         $t = '';
         while (!$t){
             $k = $this->generate(); // 随机数
-            $k = gmp_init('47499585301020110816786656201084727958399517189619207159492806221974999630250',10);
+            //$k = gmp_init('47499585301020110816786656201084727958399517189619207159492806221974999630250',10);
             $kG = $point->mul($k);
             $x1 = $this->decHex($kG->getX());
             $y1 = $this->decHex($kG->getY());
@@ -78,10 +78,10 @@ class Sm2
         $m1 = $this->decHex(gmp_xor(gmp_init($c2, 16),gmp_init($t, 16)));
         $u = $this->sm3->sm3($x2.$m1.$y2, true);
         $c3 = substr($decodeData, 128,64); // 验证hash数据
-        if($u != $c3){
+        if(strtoupper($u) != strtoupper($c3)){
             throw new \Exception("error decrypt data");
         }
 
-        return pack("H*",$m1);
+        return trim(pack("H*",$m1));
     }
 }

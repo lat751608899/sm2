@@ -23,7 +23,7 @@ trait Util
     {
         $hex = '';
         foreach ($data as $value) {
-            $hex .= base_convert($value, 10, 16);
+            $hex .= $this->getHex(base_convert($value, 10, 16));
         }
 
         return $hex;
