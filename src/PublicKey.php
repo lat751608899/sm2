@@ -85,7 +85,7 @@ class PublicKey
         $this->setPoint(new Point($x, $y));
     }
 
-    protected function parseUncompressedPoint($data)
+    public function parseUncompressedPoint($data)
     {
         if (substr($data, 0, 2) != '04') {
             throw new \InvalidArgumentException('Invalid data: only uncompressed keys are supported.');

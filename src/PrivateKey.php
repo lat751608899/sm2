@@ -36,6 +36,11 @@ class PrivateKey
         $this->key = gmp_init($otherChildren[1]->getContent(), 16);  // 私钥
     }
 
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
     public function getKey()
     {
         return $this->key;
