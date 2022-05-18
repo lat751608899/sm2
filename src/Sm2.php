@@ -21,14 +21,14 @@ class Sm2
         $t = '';
         while (!$t){
             $k = $this->generate(); // 随机数
-            //$k = gmp_init('47499585301020110816786656201084727958399517189619207159492806221974999630250',10);
+            // $k = gmp_init('74689821225634928628057736695642952596354672349967165733607647475567920739952',10);
             $kG = $point->mul($k);
-            $x1 = $this->decHex($kG->getX());
-            $y1 = $this->decHex($kG->getY());
+            $x1 = $this->decHex($kG->getX(), 64);
+            $y1 = $this->decHex($kG->getY(), 64);
             $c1 = $x1.$y1;
             $kPb = $point->mul($k, false);
-            $x2 = $this->decHex($kPb->getX());
-            $y2 = $this->decHex($kPb->getY());
+            $x2 = $this->decHex($kPb->getX(), 64);
+            $y2 = $this->decHex($kPb->getY(), 64);
             $t = $this->kdf($x2.$y2, strlen($data));
         }
         $packs = unpack('H*', $data);
@@ -70,8 +70,8 @@ class Sm2
         $x1 = substr($c1, 0,64);
         $y1 = substr($c1, 64);
         $dbC1 = (new Point(gmp_init($x1, 16), gmp_init($y1,16)))->mul($privateKey->getKey(), false);
-        $x2 = $this->decHex($dbC1->getX());
-        $y2 = $this->decHex($dbC1->getY());
+        $x2 = $this->decHex($dbC1->getX(), 64);
+        $y2 = $this->decHex($dbC1->getY(), 64);
         $len = strlen($decodeData) - 128 - 64;
         $t = $this->kdf($x2 . $y2, $len / 2);  // 转成16进制后 字符长度要除以2
         $c2 = substr($decodeData, -$len);

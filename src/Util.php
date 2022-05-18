@@ -70,7 +70,7 @@ trait Util
         return $integer;
     }
 
-    public function decHex(string $dec): string
+    public function decHex(string $dec, $len = 0): string
     {
         $dec = gmp_init($dec, 10);
 
@@ -82,6 +82,9 @@ trait Util
 
         if (strlen($hex) % 2 != 0) {
             $hex = '0'.$hex;
+        }
+        if ($len && strlen($hex) < $len) {  // point x y 要补齐 64 位
+            $hex = str_pad($hex, $len, "0", STR_PAD_LEFT);
         }
 
         return $hex;
