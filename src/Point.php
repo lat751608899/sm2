@@ -129,7 +129,7 @@ class Point
     /**
      * @return \GMP
      */
-    public function getX(): \GMP
+    public function getX()
     {
         return $this->x;
     }
@@ -137,7 +137,7 @@ class Point
     /**
      * @return \GMP
      */
-    public function getY(): \GMP
+    public function getY()
     {
         return $this->y;
     }

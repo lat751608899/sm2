@@ -17,7 +17,7 @@ class PrivateKey
      * @return Point
      * @throws \FG\ASN1\Exception\ParserException
      */
-    public function parse(string $binaryData)
+    public function parse($binaryData)
     {
         $asnObject = ASNObject::fromBinary($binaryData);
         $children = $asnObject->getChildren();

@@ -15,7 +15,7 @@ class Sm2
         $this->sm3 = new Sm3();
     }
 
-    public function pubEncrypt(PublicKey $publicKey, string $data)
+    public function pubEncrypt(PublicKey $publicKey, $data)
     {
         $point = $publicKey->getPoint();
         $t = '';
