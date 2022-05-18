@@ -24,7 +24,7 @@ class PublicKey
     /**
      * @param mixed $point
      */
-    public function setPoint(Point $point): void
+    public function setPoint(Point $point)
     {
         $this->point = $point;
     }
