@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": "^5.0",
+        "php": "^7.0 || ^8.0",
         "ext-gmp": "*",
         "fgrosse/phpasn1": "^2.0"
     },
