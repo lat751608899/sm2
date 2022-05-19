@@ -43,7 +43,7 @@ class Sm3
         while (count($bytes) >= 64) {
             for ($i = 0; $i < 16; $i++) {
                 $tmpStr = $this->bytesToStr(array_slice($bytes, 4 * $i, 4));
-                $w[$i] = @unpack('Q', $tmpStr)[1];
+                $w[$i] = @unpack('N', $tmpStr)[1];
             }
             for ($i = 16; $i < 68; $i++) {
                 $w13 = $this->leftRotate($w[$i - 13], 7);
