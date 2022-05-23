@@ -52,7 +52,7 @@ class Sm2
         for ($i = 0; $i < $j; $i++) {
             $hex = $this->sm3->sm3($z . $this->getHex($ct), true);
             if ($i + 1 == $j && $klen % 32 != 0) {  // 最后一个 且 $klen/$v 不是整数
-                $res .= substr($hex, 0, ($klen - 32) * 2); // 16进制比byte长度少一半 要乘2
+                $res .= substr($hex, 0, ($klen % 32) * 2); // 16进制比byte长度少一半 要乘2
             } else {
                 $res .= $hex;
             }
