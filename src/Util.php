@@ -10,7 +10,7 @@ trait Util
         if (strlen($hex) % 2 != 0) { // 奇数位补0
             $hex = "0" . $hex;
         }
-        $bytes = [];
+        $bytes = array();
         $len   = strlen($hex);
         for ($i = 0; $i < $len; $i++) {
             $bytes[] = (int)base_convert($hex[$i] . $hex[++$i], 16, 10);
@@ -73,12 +73,21 @@ trait Util
         return $val;
     }
 
-    public function add(...$a)
+    public function add($a, $b = 0, $c = 0, $d = 0)
     {
-        $sum = 0;
-        foreach ($a as $value) {
-            $sum = gmp_add($sum, $value);
+        if (!$a instanceof \GMP && !is_resource($a)) {
+            $a = gmp_init($a, 10);
         }
+        if (!$b instanceof \GMP  && !is_resource($b)) {
+            $b = gmp_init($b, 10);
+        }
+        if (!$c instanceof \GMP  && !is_resource($c)) {
+            $c = gmp_init($c, 10);
+        }
+        if (!$d instanceof \GMP  && !is_resource($d)) {
+            $d = gmp_init($d, 10);
+        }
+        $sum = gmp_add(gmp_add(gmp_add($a, $b), $c), $d);
         $base = gmp_init('0xFFFFFFFF', 16);
         if (gmp_cmp($sum, $base)) {
             $sum = gmp_and($sum, $base);
@@ -96,16 +105,35 @@ trait Util
 
     public function generate($numBits = 256)
     {
-        $value   = gmp_random_bits($numBits);
+        $value   = $this->randomBits($numBits);
         $mask    = gmp_sub(gmp_pow(2, $numBits), 1);
         $integer = gmp_and($value, $mask);
 
         return $integer;
     }
 
+    public function randomBits($numBits)
+    {
+        if (function_exists('gmp_random_bits')) {
+            return gmp_random_bits($numBits);
+        }
+        $bytes = array();
+        do {
+            $numBits -= 8;
+            $num = 8;
+            if ($numBits < 0) {
+                $num = $numBits + 8;
+                $numBits = 0;
+            }
+            $bytes[] = rand(0, pow(2, $num) - 1);
+        } while($numBits > 0);
+
+        return $this->strToInt($this->bytesToStr($bytes));
+    }
+
     public function decHex($dec, $len = 0)
     {
-        if (!$dec instanceof \GMP) {
+        if (!$dec instanceof \GMP && !is_resource($dec)) {
             $dec = gmp_init($dec, 10);
         }
         if (gmp_cmp($dec, 0) < 0) {

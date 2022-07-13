@@ -31,7 +31,7 @@ class Sm3
             $packBytes = array_merge($fill, $packBytes);
         }
         $bytes = array_merge($bytes, $packBytes);
-        $w = $w1 = [];
+        $w = $w1 = array();
         $a = gmp_init('0x7380166f', 16);
         $b = gmp_init('0x4914b2b9', 16);
         $c = gmp_init('0x172442d7', 16);

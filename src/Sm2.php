@@ -52,7 +52,7 @@ class Sm2
         for ($i = 0; $i < $j; $i++) {
             $hex = $this->sm3->sm3($z . $this->getHex($ct), true);
             if ($i + 1 == $j && $klen % 32 != 0) {  // 最后一个 且 $klen/$v 不是整数
-                $res .= substr($hex, 0, ($klen - 32) * 2); // 16进制比byte长度少一半 要乘2
+                $res .= substr($hex, 0, ($klen % 32) * 2); // 16进制比byte长度少一半 要乘2
             } else {
                 $res .= $hex;
             }
@@ -69,7 +69,8 @@ class Sm2
         $c1 = substr($decodeData, 0,128); // 转成16进制后 点数据长度要乘以2
         $x1 = substr($c1, 0,64);
         $y1 = substr($c1, 64);
-        $dbC1 = (new Point(gmp_init($x1, 16), gmp_init($y1,16)))->mul($privateKey->getKey(), false);
+        $point = new Point(gmp_init($x1, 16), gmp_init($y1,16));
+        $dbC1 = $point->mul($privateKey->getKey(), false);
         $x2 = $this->decHex($dbC1->getX(), 64);
         $y2 = $this->decHex($dbC1->getY(), 64);
         $len = strlen($decodeData) - 128 - 64;

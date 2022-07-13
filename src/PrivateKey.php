@@ -28,17 +28,17 @@ class PrivateKey
         if ($asnObject->getNumberofChildren() != 3) {
             throw new \RuntimeException('Invalid data.');
         }
-        $oid = $children[1]->getContent()[1];
+//        $oid = $children[1]->getContent()[1];
         $bin = hex2bin($children[2]->getContent());
         $otherAsn = ASNObject::fromBinary($bin);
         $otherChildren = $otherAsn->getChildren();
         $version = $otherChildren[0]; // 版本
-        $this->key = gmp_init($otherChildren[1]->getContent(), 16);  // 私钥
+        $this->setKey($otherChildren[1]->getContent());// 私钥
     }
 
     public function setKey($key)
     {
-        $this->key = $key;
+        $this->key = gmp_init($key, 16);  // 私钥;
     }
 
     public function getKey()
@@ -57,7 +57,7 @@ class PrivateKey
         $x = gmp_init(substr($data, 0, $dataLength / 2), 16);
         $y = gmp_init(substr($data, $dataLength / 2), 16);
 
-        return [$x, $y];
+        return array($x, $y);
     }
 
     public function getPublickKey()

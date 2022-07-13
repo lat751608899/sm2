@@ -96,7 +96,7 @@ class PublicKey
         $x = gmp_init(substr($data, 0, $dataLength / 2), 16);
         $y = gmp_init(substr($data, $dataLength / 2), 16);
 
-        return [$x, $y];
+        return array($x, $y);
     }
 
 

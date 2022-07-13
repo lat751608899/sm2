@@ -49,10 +49,10 @@ class Point
         }
         $p = $isBase ? new self($this->GX, $this->GY) : clone $this;
         /** @var Point[] $r */
-        $r = [
+        $r = array(
             $this->getInfinity(), // Q
             $p// P
-        ];
+        );
         $base = gmp_strval(gmp_init(gmp_strval($n), 10), 2);
         $n = strrev(str_pad($base, $this->size, '0', STR_PAD_LEFT));
         for ($i = 0; $i < $this->size; $i++) {
