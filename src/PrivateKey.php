@@ -33,12 +33,12 @@ class PrivateKey
         $otherAsn = ASNObject::fromBinary($bin);
         $otherChildren = $otherAsn->getChildren();
         $version = $otherChildren[0]; // 版本
-        $this->key = gmp_init($otherChildren[1]->getContent(), 16);  // 私钥
+        $this->setKey($otherChildren[1]->getContent());// 私钥
     }
 
     public function setKey($key)
     {
-        $this->key = $key;
+        $this->key = gmp_init($key, 16);  // 私钥;
     }
 
     public function getKey()
