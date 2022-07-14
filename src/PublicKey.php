@@ -99,7 +99,7 @@ class PublicKey
         $y = gmp_init(substr($data, $dataLength / 2), 16);
         $this->setPoint(new Point($x, $y));
 	
-	return [$x, $y];
+	    return [$x, $y];
     }
 
 
