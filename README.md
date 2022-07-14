@@ -31,8 +31,7 @@ $data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 $key = '0451844d8f4e8881806f27169142f7e22932245af841d4b6c705e8e2b3adbb0041616dd0968910e76df6c4f6eb1d6f0ef11188b54bb09f47aa925c15d4ab13c119';
 $sm2 = new \Lat\Ecc\Sm2();
 $pubKey = new \Lat\Ecc\PublicKey();
-list($x, $y) = $pubKey->parseUncompressedPoint($key);
-$pubKey->setPoint(new \Lat\Ecc\Point($x, $y));
+$pubKey->parseUncompressedPoint($key);
 $res = $sm2->pubEncrypt($pubKey, $data);
 
 // sm2 解密

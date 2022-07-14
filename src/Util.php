@@ -23,8 +23,7 @@ trait Util
     {
         $hex = '';
         foreach ($data as $value) {
-//            $hex .= $this->getHex(base_convert($value, 10, 16));
-            $hex .= $this->getHex(gmp_strval($value, 16));
+            $hex .= $this->decHex($value, 8);
         }
 
         return $hex;
@@ -49,7 +48,7 @@ trait Util
 
     public function bytesToStr($bytes)
     {
-        array_unshift($bytes, 'C' . count($bytes));
+        array_unshift($bytes,'C'.count($bytes));
 
         return call_user_func_array('pack', $bytes);
     }
