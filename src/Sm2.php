@@ -36,8 +36,8 @@ class Sm2
             $value = str_pad($value, 2,0,STR_PAD_LEFT);
         }
         $strHex = join('', $packs);
-        $c2 = gmp_xor($this->strToInt($data), gmp_init($t, 16));
-        $c2 = $this->decHex($c2);
+        $c2 = gmp_xor(gmp_init($t, 16), $this->strToInt($data));
+        $c2 = $this->decHex($c2, strlen($data) * 2);
         $c3 = $this->sm3->sm3($x2.$strHex.$y2,true);
         $encryptData = "04".$c1.$c3.$c2;
 
@@ -50,7 +50,7 @@ class Sm2
         $ct = 1;
         $j = ceil($klen / 32);
         for ($i = 0; $i < $j; $i++) {
-            $hex = $this->sm3->sm3($z . $this->getHex($ct), true);
+            $hex = $this->sm3->sm3($z . $this->decHex($ct, 8), true);
             if ($i + 1 == $j && $klen % 32 != 0) {  // 最后一个 且 $klen/$v 不是整数
                 $res .= substr($hex, 0, ($klen % 32) * 2); // 16进制比byte长度少一半 要乘2
             } else {
@@ -75,13 +75,13 @@ class Sm2
         $len = strlen($decodeData) - 128 - 64;
         $t = $this->kdf($x2 . $y2, $len / 2);  // 转成16进制后 字符长度要除以2
         $c2 = substr($decodeData, -$len);
-        $m1 = $this->decHex(gmp_xor(gmp_init($c2, 16),gmp_init($t, 16)));
+        $m1 = $this->decHex(gmp_xor(gmp_init($t, 16), gmp_init($c2, 16)));
         $u = $this->sm3->sm3($x2.$m1.$y2, true);
         $c3 = substr($decodeData, 128,64); // 验证hash数据
         if(strtoupper($u) != strtoupper($c3)){
             throw new \Exception("error decrypt data");
         }
 
-        return trim(pack("H*",$m1));
+        return pack("H*",$m1);
     }
 }

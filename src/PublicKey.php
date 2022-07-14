@@ -92,11 +92,14 @@ class PublicKey
         }
         $data = substr($data, 2);
         $dataLength = strlen($data);
-
+        if ($dataLength != 128) {
+            throw new \InvalidArgumentException('Invalid Public Key length');
+        }
         $x = gmp_init(substr($data, 0, $dataLength / 2), 16);
         $y = gmp_init(substr($data, $dataLength / 2), 16);
-
-        return [$x, $y];
+        $this->setPoint(new Point($x, $y));
+	
+	return [$x, $y];
     }
 
 

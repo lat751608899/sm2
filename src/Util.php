@@ -23,7 +23,7 @@ trait Util
     {
         $hex = '';
         foreach ($data as $value) {
-            $hex .= $this->getHex(base_convert($value, 10, 16));
+            $hex .= $this->decHex($value, 8);
         }
 
         return $hex;
@@ -70,10 +70,11 @@ trait Util
         return $integer;
     }
 
-    public function decHex(string $dec, $len = 0): string
+    public function decHex($dec, $len = 0): string
     {
-        $dec = gmp_init($dec, 10);
-
+        if (!$dec instanceof \GMP) {
+            $dec = gmp_init($dec, 10);
+        }
         if (gmp_cmp($dec, 0) < 0) {
             throw new \Exception('Unable to convert negative integer to string');
         }
