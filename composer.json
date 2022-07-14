@@ -2,6 +2,7 @@
     "name": "latzou/sm2",
     "description": "This is a PHP library for sm2 encrypt decrypt and sm3 hash",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "zlq",

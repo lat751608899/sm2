@@ -101,6 +101,4 @@ class PublicKey
         
         return [$x, $y];
     }
-
-
 }
