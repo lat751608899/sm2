@@ -23,7 +23,7 @@ trait Util
     {
         $hex = '';
         foreach ($data as $value) {
-            $hex .= $this->decHex($value, 8);
+            $hex .= unpack('H*', pack('N', $value))[1];
         }
 
         return $hex;
@@ -43,6 +43,7 @@ trait Util
 
     public function bytesToStr($bytes)
     {
+        return pack('C*', ...$bytes);
         array_unshift($bytes,'C'.count($bytes));
 
         return call_user_func_array('pack', $bytes);

@@ -4,7 +4,7 @@
 namespace Lat\Ecc;
 
 
-class Sm3
+class Sm3Old
 {
     use Util;
 
@@ -19,15 +19,18 @@ class Sm3
         if ($hex) {  // 传的16进制数据
             $data = hex2bin($data);
         }
-        $len = strlen($data);
-        $pack = pack('N', $len * 8);
-        $data .= chr(128); // 补 1
-        $len++;
-        $mod = $len % 64;
-        //$data .= str_pad('', (56 - $mod + ($mod <= 56 ? 0 : 64)),chr(0)); // 补 0 到 64n + 56
-        //$data .= str_pad($pack, 8,chr(0), STR_PAD_LEFT); // 补 0 到 64n + 56 + 8
-        $data .= pack('@' . (56 - $mod + ($mod <= 56 ? 0 : 64))); // 补 0 到 64n + 56
-        $data .= pack('@' . (8 - strlen($pack))) . $pack; // 补 0 到 64n + 56 + 8
+        $bytes = $this->strToBytes($data);
+        $bytes[] = 128; // 补 1
+        while (count($bytes) % 64 != 56) {
+            $bytes[] = 0;
+        }
+        $pack = pack('n', strlen($data) * 8);
+        $packBytes = $this->strToBytes($pack);
+        if (count($packBytes) < 8) {
+            $fill = array_fill(0, 8 - count($packBytes), 0);
+            $packBytes = array_merge($fill, $packBytes);
+        }
+        $bytes = array_merge($bytes, $packBytes);
         $w = $w1 = [];
         $a = 0x7380166f;
         $b = 0x4914b2b9;
@@ -37,10 +40,10 @@ class Sm3
         $f = 0x163138aa;
         $g = 0xe38dee4d;
         $h = 0xb0fb0e4e;
-        while (strlen($data) >= 64) {
+        while (count($bytes) >= 64) {
             for ($i = 0; $i < 16; $i++) {
-                $tmp = unpack('N', substr($data, $i * 4, 4));
-                $w[$i] = $tmp[1];
+                $tmpStr = $this->bytesToStr(array_slice($bytes, 4 * $i, 4));
+                $w[$i] = @unpack('N', $tmpStr)[1];
             }
             for ($i = 16; $i < 68; $i++) {
                 $w13 = $this->leftRotate($w[$i - 13], 7);
@@ -87,7 +90,7 @@ class Sm3
             $f ^= $F;
             $g ^= $G;
             $h ^= $H;
-            $data = substr($data, 64);
+            $bytes = array_splice($bytes, 64);
         }
 
         $array = compact('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
