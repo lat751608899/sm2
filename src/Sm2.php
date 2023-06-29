@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Lat\Ecc;
-
 
 class Sm2
 {
@@ -15,7 +13,15 @@ class Sm2
         $this->sm3 = new Sm3();
     }
 
-    public function pubEncrypt(PublicKey $publicKey, $data)
+    /**
+     *
+     * @param PublicKey $publicKey
+     * @param $data
+     * @param $mode 1= C1C3C2  2=C1C2C3
+     * @return string
+     * @throws \Exception
+     */
+    public function pubEncrypt(PublicKey $publicKey, $data, $mode = 1)
     {
         $point = $publicKey->getPoint();
         $t = '';
@@ -37,7 +43,11 @@ class Sm2
         $c2 = gmp_xor(gmp_init($t, 16), $this->strToInt($data));
         $c2 = $this->decHex($c2, strlen($data) * 2);
         $c3 = $this->sm3->sm3($x2 . $data . $y2);
-        $encryptData = "04".$c1.$c3.$c2;
+        if ($mode == 1) {
+            $encryptData = "04".$c1.$c3.$c2;
+        } else {
+            $encryptData = "04".$c1.$c2.$c3;
+        }
 
         return $encryptData;
     }
@@ -61,7 +71,7 @@ class Sm2
         return $res;
     }
 
-    public function decrypt(PrivateKey $privateKey,$data)
+    public function decrypt(PrivateKey $privateKey,$data, $mode = 1)
     {
         $decodeData = substr($data, 2);
         // 取出 c1
@@ -69,21 +79,23 @@ class Sm2
         $x1 = substr($c1, 0,64);
         $y1 = substr($c1, 64);
         $dbC1 = (new Point(gmp_init($x1, 16), gmp_init($y1,16)))->mul($privateKey->getKey(), false);
-        $x2 = gmp_strval($dbC1->getX(), 16);
-        $y2 = gmp_strval($dbC1->getY(), 16);
-        $x2 = pack('H*', str_pad($x2, 64, 0,STR_PAD_LEFT));
-        $y2 = pack('H*', str_pad($y2, 64, 0,STR_PAD_LEFT));
+        $x2 = $this->decHex($dbC1->getX(), 64);
+        $y2 = $this->decHex($dbC1->getY(), 64);
         $len = strlen($decodeData) - 128 - 64;
         $t = $this->kdf($x2 . $y2, $len / 2);  // 转成16进制后 字符长度要除以2
-        $c2 = substr($decodeData, -$len);
-        $m1 = gmp_strval(gmp_xor(gmp_init($t, 16), gmp_init($c2, 16)), 16);
-        $m1 = pack("H*", $m1);
-        $u = $this->sm3->sm3($x2.$m1.$y2);
-        $c3 = substr($decodeData, 128,64); // 验证hash数据
+        if ($mode == 1) { // C1C3C2
+            $c2 = substr($decodeData, -$len);
+            $c3 = substr($decodeData, 128,64); // 验证hash数据
+        } else { // C1C2C3
+            $c3 = substr($decodeData, -64);
+            $c2 = substr($decodeData, 128, $len);
+        }
+        $m1 = $this->decHex(gmp_xor(gmp_init($t, 16), gmp_init($c2, 16)));
+        $u = $this->sm3->sm3($x2.$m1.$y2, true);
         if(strtoupper($u) != strtoupper($c3)){
             throw new \Exception("error decrypt data");
         }
 
-        return $m1;
+        return pack("H*",$m1);
     }
 }
