@@ -24,7 +24,7 @@ class Sm3Old
         while (count($bytes) % 64 != 56) {
             $bytes[] = 0;
         }
-        $pack = pack('n', strlen($data) * 8);
+        $pack = pack('N', strlen($data) * 8);
         $packBytes = $this->strToBytes($pack);
         if (count($packBytes) < 8) {
             $fill = array_fill(0, 8 - count($packBytes), 0);

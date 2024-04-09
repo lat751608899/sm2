@@ -58,8 +58,7 @@ class Sm2
         $ct = 1;
         $j = ceil($klen / 32);
         for ($i = 0; $i < $j; $i++) {
-            $ctStr = str_pad(chr($ct), 4, chr(0),STR_PAD_LEFT);
-            $hex = $this->sm3->sm3($z . $ctStr);
+            $hex = $this->sm3->sm3($z . pack('N', $ct));
             if ($i + 1 == $j && $klen % 32 != 0) {  // 最后一个 且 $klen/$v 不是整数
                 $res .= substr($hex, 0, ($klen % 32) * 2); // 16进制比byte长度少一半 要乘2
             } else {
