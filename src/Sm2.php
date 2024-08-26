@@ -81,7 +81,9 @@ class Sm2
         $x2 = $this->decHex($dbC1->getX(), 64);
         $y2 = $this->decHex($dbC1->getY(), 64);
         $len = strlen($decodeData) - 128 - 64;
-        $t = $this->kdf($x2 . $y2, $len / 2);  // 转成16进制后 字符长度要除以2
+        $x2bin = pack('H*', str_pad($x2, 64, 0,STR_PAD_LEFT));
+        $y2bin = pack('H*', str_pad($y2, 64, 0,STR_PAD_LEFT));
+        $t = $this->kdf($x2bin . $y2bin, $len / 2);  // 转成16进制后 字符长度要除以2
         if ($mode == 1) { // C1C3C2
             $c2 = substr($decodeData, -$len);
             $c3 = substr($decodeData, 128,64); // 验证hash数据
